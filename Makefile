@@ -15,8 +15,12 @@ lint:
 	golangci-lint run --fix
 
 clean:
-	rm -rf katbox
+	rm -rf dist/*
 
 .PHONY: image
-image: katbox
+image: dist/katbox
 	docker build -t atechnohazard/katbox .
+
+.PHONY: push
+push: image
+	docker push atechnohazard/katbox

@@ -6,3 +6,4 @@ dist
 tmp
 *.log
 .idea
+node_modules

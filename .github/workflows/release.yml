@@ -1,13 +1,11 @@
-# workflow name
 name: Generate release artifacts
 
-# on events
 on:
-  release:
-    types: 
-        - created
+  push:
+    branches:
+      - develop
+      - main
 
-# workflow tasks
 jobs:
   generate:
     name: Generate cross-platform builds
@@ -15,11 +13,26 @@ jobs:
     steps:
       - name: Checkout the repository
         uses: actions/checkout@v2
+
+      - name: Set up Node.js 16
+        uses: actions/setup-node@v2
+        with:
+          node-version: 16
+
+      - name: Install dependencies
+        run: npm install
+
       - name: Generate build files
         uses: thatisuday/go-cross-build@v1
         with:
-            platforms: 'linux/amd64, darwin/amd64, linux/arm, linux/arm64, darwin/arm64, windows/amd64'
+            platforms: 'linux/amd64, linux/arm, linux/arm64, windows/amd64'
             package: ''
             name: 'katbox'
             compress: 'false'
             dest: 'dist'
+
+      - name: Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ENVIRONMENT: ${{ github.ref }}
+        run: npx semantic-release
