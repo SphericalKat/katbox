@@ -4,6 +4,7 @@ import (
 	"context"
 	"sync"
 
+	"github.com/SphericalKat/katbox/api"
 	"github.com/SphericalKat/katbox/internal/config"
 	"github.com/SphericalKat/katbox/internal/db"
 	"github.com/SphericalKat/katbox/internal/lifecycle"
@@ -24,6 +25,10 @@ func main() {
 	wg.Add(1)
 	go db.Connect(ctx, &wg)
 
+	// start http server
+	wg.Add(1)
+	go api.StartListening(ctx, &wg)
+
 	// add signal handler to gracefully shut down tasks
 	wg.Add(1)
 	go lifecycle.ShutdownListener(&wg, &cancelFunc)
@@ -32,5 +37,4 @@ func main() {
 	wg.Wait()
 
 	log.Info("Graceful shutdown complete.")
-
 }
