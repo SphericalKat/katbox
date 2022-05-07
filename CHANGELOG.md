@@ -1,3 +1,10 @@
+# [1.0.0-develop.2](https://github.com/sphericalkat/katbox/compare/v1.0.0-develop.1...v1.0.0-develop.2) (2022-05-07)
+
+
+### Features
+
+* **release:** add ldflags ([c0c51a2](https://github.com/sphericalkat/katbox/commit/c0c51a230fc36bd913235059301b41af3fc992c1))
+
 # 1.0.0-develop.1 (2022-05-07)
 
 
