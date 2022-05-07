@@ -6,5 +6,8 @@ import (
 	"entgo.io/ent/dialect/sql"
 )
 
+// File is the predicate function for file builders.
+type File func(*sql.Selector)
+
 // User is the predicate function for user builders.
 type User func(*sql.Selector)

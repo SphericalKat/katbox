@@ -9,6 +9,7 @@ import (
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/SphericalKat/katbox/ent/file"
 	"github.com/SphericalKat/katbox/ent/user"
 	"github.com/google/uuid"
 )
@@ -44,6 +45,21 @@ func (uc *UserCreate) SetNillableID(u *uuid.UUID) *UserCreate {
 		uc.SetID(*u)
 	}
 	return uc
+}
+
+// AddFileIDs adds the "files" edge to the File entity by IDs.
+func (uc *UserCreate) AddFileIDs(ids ...uuid.UUID) *UserCreate {
+	uc.mutation.AddFileIDs(ids...)
+	return uc
+}
+
+// AddFiles adds the "files" edges to the File entity.
+func (uc *UserCreate) AddFiles(f ...*File) *UserCreate {
+	ids := make([]uuid.UUID, len(f))
+	for i := range f {
+		ids[i] = f[i].ID
+	}
+	return uc.AddFileIDs(ids...)
 }
 
 // Mutation returns the UserMutation object of the builder.
@@ -192,6 +208,25 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 			Column: user.FieldPassword,
 		})
 		_node.Password = value
+	}
+	if nodes := uc.mutation.FilesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.FilesTable,
+			Columns: []string{user.FilesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeUUID,
+					Column: file.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec
 }

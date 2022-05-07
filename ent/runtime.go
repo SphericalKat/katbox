@@ -3,6 +3,9 @@
 package ent
 
 import (
+	"time"
+
+	"github.com/SphericalKat/katbox/ent/file"
 	"github.com/SphericalKat/katbox/ent/schema"
 	"github.com/SphericalKat/katbox/ent/user"
 	"github.com/google/uuid"
@@ -12,6 +15,20 @@ import (
 // (default values, validators, hooks and policies) and stitches it
 // to their package variables.
 func init() {
+	fileFields := schema.File{}.Fields()
+	_ = fileFields
+	// fileDescStorageKey is the schema descriptor for storage_key field.
+	fileDescStorageKey := fileFields[1].Descriptor()
+	// file.StorageKeyValidator is a validator for the "storage_key" field. It is called by the builders before save.
+	file.StorageKeyValidator = fileDescStorageKey.Validators[0].(func(string) error)
+	// fileDescExpiresAt is the schema descriptor for expires_at field.
+	fileDescExpiresAt := fileFields[2].Descriptor()
+	// file.DefaultExpiresAt holds the default value on creation for the expires_at field.
+	file.DefaultExpiresAt = fileDescExpiresAt.Default.(func() time.Time)
+	// fileDescID is the schema descriptor for id field.
+	fileDescID := fileFields[0].Descriptor()
+	// file.DefaultID holds the default value on creation for the id field.
+	file.DefaultID = fileDescID.Default.(func() uuid.UUID)
 	userFields := schema.User{}.Fields()
 	_ = userFields
 	// userDescEmail is the schema descriptor for email field.
