@@ -24,7 +24,7 @@ jobs:
         run: npm install
 
       - name: Generate build files
-        uses: thatisuday/go-cross-build@v1
+        uses: thatisuday/go-cross-build@master
         with:
             platforms: 'linux/amd64, linux/arm, linux/arm64, windows/amd64'
             package: ''

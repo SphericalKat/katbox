@@ -24,3 +24,7 @@ image: dist/katbox
 .PHONY: push
 push: image
 	docker push atechnohazard/katbox
+
+.PHONY: ent
+ent:
+	go generate ./ent
