@@ -31,6 +31,7 @@ jobs:
             name: 'katbox'
             compress: 'false'
             dest: 'dist'
+            ldflags: '-w -s -extldflags "-static"'
 
       - name: Release
         env:
