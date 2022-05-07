@@ -1,0 +1,8 @@
+katbox
+.envrc
+.env
+dist
+.vscode
+tmp
+*.log
+.idea

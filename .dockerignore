@@ -1,0 +1,6 @@
+.env
+.envrc
+.vscode
+*.yml
+*.yaml
+*.md
