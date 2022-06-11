@@ -8,6 +8,8 @@ import (
 type Config struct {
 	DatabaseURL string `mapstructure:"DATABASE_URL"`
 	Port        string `mapstructure:"PORT"`
+	S3AccessKey string `mapstructure:"S3_ACCESS_KEY"`
+	S3SecretKey string `mapstructure:"S3_SECRET_KEY"`
 }
 
 var Conf *Config

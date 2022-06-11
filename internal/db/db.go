@@ -28,10 +28,8 @@ func Connect(ctx context.Context, wg *sync.WaitGroup) {
 	log.Info("Connected to the database.")
 
 	// graceful shutdown
-	select {
-	case <-ctx.Done():
-		log.Info("Shutting down database connection...")
-		DB.Close()
-		wg.Done()
-	}
+	<-ctx.Done()
+	log.Info("Shutting down database connection...")
+	DB.Close()
+	wg.Done()
 }

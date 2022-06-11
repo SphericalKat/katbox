@@ -5,6 +5,7 @@ import (
 	"sync"
 
 	"github.com/SphericalKat/katbox/api"
+	"github.com/SphericalKat/katbox/internal/aws"
 	"github.com/SphericalKat/katbox/internal/config"
 	"github.com/SphericalKat/katbox/internal/db"
 	"github.com/SphericalKat/katbox/internal/lifecycle"
@@ -14,6 +15,9 @@ import (
 func main() {
 	// load config
 	config.Load()
+
+	// connect to s3
+	aws.Connect()
 
 	// create a waitgroup for all tasks
 	wg := sync.WaitGroup{}

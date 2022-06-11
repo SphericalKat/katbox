@@ -28,13 +28,13 @@ func StartListening(ctx context.Context, wg *sync.WaitGroup) {
 	}(app)
 
 	// listen for context cancellation
-	select {
-	case <-ctx.Done():
-		// shut down http server
-		log.Info("Gracefully shutting down http server...")
-		if err := app.Shutdown(); err != nil {
-			log.Warn("Server shutdown Failed: ", err)
-		}
-		wg.Done()
+	<-ctx.Done()
+
+	// shut down http server
+	log.Info("Gracefully shutting down http server...")
+	if err := app.Shutdown(); err != nil {
+		log.Warn("Server shutdown Failed: ", err)
 	}
+	wg.Done()
+
 }
