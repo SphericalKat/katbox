@@ -36,5 +36,4 @@ func StartListening(ctx context.Context, wg *sync.WaitGroup) {
 		log.Warn("Server shutdown Failed: ", err)
 	}
 	wg.Done()
-
 }
