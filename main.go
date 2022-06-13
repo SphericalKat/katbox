@@ -21,6 +21,9 @@ import (
 //go:embed template/*
 var template embed.FS
 
+//go:embed static/*
+var static embed.FS
+
 func main() {
 	// load config
 	config.Load()
@@ -35,6 +38,13 @@ func main() {
 	}
 	engine := html.NewFileSystem(http.FS(tmplFs), ".html")
 
+	// create static file server
+	staticFs, err := fs.Sub(static, "static")
+	if err != nil {
+		log.Fatalf("error loading static assets: %v\n", err)
+	}
+	staticHttp := http.FS(staticFs)
+
 	// create a waitgroup for all tasks
 	wg := sync.WaitGroup{}
 
@@ -47,7 +57,7 @@ func main() {
 
 	// start http server
 	wg.Add(1)
-	go api.StartListening(ctx, &wg, engine)
+	go api.StartListening(ctx, &wg, engine, staticHttp)
 
 	// add signal handler to gracefully shut down tasks
 	wg.Add(1)

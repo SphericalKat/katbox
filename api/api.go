@@ -3,14 +3,16 @@ package api
 import (
 	"context"
 	"fmt"
+	"net/http"
 	"sync"
 
 	"github.com/SphericalKat/katbox/internal/config"
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/filesystem"
 	log "github.com/sirupsen/logrus"
 )
 
-func StartListening(ctx context.Context, wg *sync.WaitGroup, engine fiber.Views) {
+func StartListening(ctx context.Context, wg *sync.WaitGroup, engine fiber.Views, static http.FileSystem) {
 	app := fiber.New(fiber.Config{
 		StreamRequestBody:     true,
 		ServerHeader:          "Katbox",
@@ -18,6 +20,12 @@ func StartListening(ctx context.Context, wg *sync.WaitGroup, engine fiber.Views)
 		Views:                 engine,
 		DisableStartupMessage: true,
 	})
+
+	// static file server
+	app.Use("/static", filesystem.New(filesystem.Config{
+		Root:   static,
+		Browse: config.Conf.Env == "dev",
+	}))
 
 	app.Get("/", func(c *fiber.Ctx) error {
 		return c.Render("index", fiber.Map{

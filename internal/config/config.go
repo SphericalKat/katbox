@@ -11,6 +11,7 @@ type Config struct {
 	S3AccessKey  string `mapstructure:"S3_ACCESS_KEY"`
 	S3SecretKey  string `mapstructure:"S3_SECRET_KEY"`
 	S3BucketName string `mapstructure:"S3_BUCKET_NAME"`
+	Env          string `mapstructure:"ENV"`
 }
 
 var Conf *Config
@@ -28,6 +29,7 @@ func Load() {
 	viper.SetDefault("PORT", "3000")
 	viper.SetDefault("DATABASE_URL", "postgres://postgres:password@localhost:5432/katbox?sslmode=disable")
 	viper.SetDefault("S3_BUCKET_NAME", "katbox")
+	viper.SetDefault("ENV", "dev")
 
 	// read in config values
 	err := viper.ReadInConfig()
