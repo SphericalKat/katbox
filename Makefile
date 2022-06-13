@@ -2,12 +2,16 @@ dist/katbox:
 	mkdir -p dist
 	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags='-w -s -extldflags "-static"' -a -o dist/katbox
 
+.PHONY: tailwind
+tailwind:
+	npm run build
+
 .PHONY: dev
-dev:
+dev: tailwind
 	air -c .air.toml
 
 .PHONY: run
-run:
+run: tailwind
 	go run main.go
 
 .PHONY: lint
