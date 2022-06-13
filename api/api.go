@@ -10,11 +10,19 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-func StartListening(ctx context.Context, wg *sync.WaitGroup) {
-	app := fiber.New()
+func StartListening(ctx context.Context, wg *sync.WaitGroup, engine fiber.Views) {
+	app := fiber.New(fiber.Config{
+		StreamRequestBody:     true,
+		ServerHeader:          "Katbox",
+		AppName:               "Katbox",
+		Views:                 engine,
+		DisableStartupMessage: true,
+	})
 
 	app.Get("/", func(c *fiber.Ctx) error {
-		return c.SendString("OK")
+		return c.Render("index", fiber.Map{
+			"Title": "Katbox",
+		})
 	})
 
 	// mount routes

@@ -10,6 +10,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/feature/s3/manager v1.11.15
 	github.com/aws/aws-sdk-go-v2/service/s3 v1.26.11
 	github.com/gofiber/fiber/v2 v2.34.0
+	github.com/gofiber/template v1.6.28
 	github.com/google/uuid v1.3.0
 	github.com/lib/pq v1.10.6
 	github.com/sirupsen/logrus v1.8.1

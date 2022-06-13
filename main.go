@@ -2,15 +2,24 @@ package main
 
 import (
 	"context"
+	"io/fs"
+
+	"net/http"
 	"sync"
+
+	"embed"
 
 	"github.com/SphericalKat/katbox/api"
 	"github.com/SphericalKat/katbox/internal/aws"
 	"github.com/SphericalKat/katbox/internal/config"
 	"github.com/SphericalKat/katbox/internal/db"
 	"github.com/SphericalKat/katbox/internal/lifecycle"
+	"github.com/gofiber/template/html"
 	log "github.com/sirupsen/logrus"
 )
+
+//go:embed template/*
+var template embed.FS
 
 func main() {
 	// load config
@@ -18,6 +27,13 @@ func main() {
 
 	// connect to s3
 	aws.Connect()
+
+	// create template engine
+	tmplFs, err := fs.Sub(template, "template")
+	if err != nil {
+		log.Fatalf("error loading template: %v\n", err)
+	}
+	engine := html.NewFileSystem(http.FS(tmplFs), ".html")
 
 	// create a waitgroup for all tasks
 	wg := sync.WaitGroup{}
@@ -31,7 +47,7 @@ func main() {
 
 	// start http server
 	wg.Add(1)
-	go api.StartListening(ctx, &wg)
+	go api.StartListening(ctx, &wg, engine)
 
 	// add signal handler to gracefully shut down tasks
 	wg.Add(1)
