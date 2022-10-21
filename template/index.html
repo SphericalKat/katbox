@@ -10,11 +10,18 @@
 </head>
 
 <body>
-    <form action="POST">
-        <label for="upload" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">Upload</label>
-        <input type="file" name="upload" id="upload"
-            class="block w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 cursor-pointer dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400">
-    </form>
+    <div class="flex flex-col justify-center items-center w-full h-full">
+        {{if .Error}}
+        <div class="w-full bg-orange-400 text-center py-1">{{.Error}}</div>
+        {{end}}
+        <h1 class="font-bold text-4xl text-accent pt-4">Upload</h1>
+        <form action="/upload" method="post" class="flex flex-col h-full justify-center items-start m-auto text-sm">
+            <label for="upload" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">Upload</label>
+            <input type="file" name="upload" id="upload" required
+                class="block w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 cursor-pointer dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400">
+            <button type="submit" class="bg-accent mt-4 rounded-sm px-2 py-1 w-full">Upload</button>
+        </form>
+    </div>
 </body>
 
 </html>
