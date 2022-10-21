@@ -35,6 +35,7 @@ func StartListening(ctx context.Context, wg *sync.WaitGroup, engine fiber.Views,
 
 	// mount routes
 	MountUpload(app)
+	MountAuth(app)
 
 	go func(app *fiber.App) {
 		log.Printf("Starting http server at: http://localhost:%s", config.Conf.Port)

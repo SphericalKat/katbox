@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/index.gen.css">
+    <title>Katbox - Login</title>
+</head>
+
+<body>
+    <div class="flex flex-col justify-center items-center w-full h-full">
+        <h1 class="font-bold text-4xl text-accent pt-4">Login</h1>
+
+        <form action="/auth/login" method="post" class="flex flex-col h-full justify-center items-start m-auto text-sm">
+            <div class="flex flex-col w-full">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" class="text-black text-sm px-2 py-1 outline-none rounded-sm" required
+                    placeholder="mary.sue@example.com">
+            </div>
+
+            <div class="flex flex-col w-full mt-2">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" class="text-black text-sm px-2 py-1 outline-none rounded-sm" required placeholder="password">
+            </div>
+
+            <button type="submit" class="bg-accent mt-4 rounded-sm px-2 py-1 w-full">Login</button>
+        </form>
+    </div>
+</body>
+
+</html>

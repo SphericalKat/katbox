@@ -9,12 +9,13 @@ require (
 	github.com/aws/aws-sdk-go-v2/credentials v1.12.5
 	github.com/aws/aws-sdk-go-v2/feature/s3/manager v1.11.15
 	github.com/aws/aws-sdk-go-v2/service/s3 v1.26.11
-	github.com/gofiber/fiber/v2 v2.34.0
-	github.com/gofiber/template v1.6.28
+	github.com/gofiber/fiber/v2 v2.37.1
+	github.com/gofiber/template v1.7.1
 	github.com/google/uuid v1.3.0
 	github.com/lib/pq v1.10.6
 	github.com/sirupsen/logrus v1.8.1
 	github.com/spf13/viper v1.12.0
+	golang.org/x/crypto v0.0.0-20220525230936-793ad666bf5e
 )
 
 require (
@@ -53,7 +54,7 @@ require (
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/subosito/gotenv v1.4.0 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
-	github.com/valyala/fasthttp v1.37.0 // indirect
+	github.com/valyala/fasthttp v1.40.0 // indirect
 	github.com/valyala/tcplisten v1.0.0 // indirect
 	github.com/zclconf/go-cty v1.10.0 // indirect
 	golang.org/x/mod v0.5.1 // indirect

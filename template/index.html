@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -7,7 +8,13 @@
     <link rel="stylesheet" href="/static/index.gen.css">
     <title>{{ .Title }}</title>
 </head>
+
 <body>
-    <h1 class="text-xl">Hello, world!</h1>
+    <form action="POST">
+        <label for="upload" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">Upload</label>
+        <input type="file" name="upload" id="upload"
+            class="block w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 cursor-pointer dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400">
+    </form>
 </body>
+
 </html>

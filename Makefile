@@ -7,7 +7,7 @@ tailwind:
 	npm run build
 
 .PHONY: dev
-dev: tailwind
+dev: 
 	air -c .air.toml
 
 .PHONY: run
