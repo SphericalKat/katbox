@@ -6,8 +6,11 @@ import (
 	"net/http"
 	"sync"
 
+	"github.com/SphericalKat/katbox/ent/user"
 	"github.com/SphericalKat/katbox/internal/config"
+	"github.com/SphericalKat/katbox/internal/db"
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/encryptcookie"
 	"github.com/gofiber/fiber/v2/middleware/filesystem"
 	log "github.com/sirupsen/logrus"
 )
@@ -21,6 +24,11 @@ func StartListening(ctx context.Context, wg *sync.WaitGroup, engine fiber.Views,
 		DisableStartupMessage: true,
 	})
 
+	// encrypted cookies
+	app.Use(encryptcookie.New(encryptcookie.Config{
+		Key: config.Conf.SecretKey,
+	}))
+
 	// static file server
 	app.Use("/static", filesystem.New(filesystem.Config{
 		Root:   static,
@@ -28,6 +36,20 @@ func StartListening(ctx context.Context, wg *sync.WaitGroup, engine fiber.Views,
 	}))
 
 	app.Get("/", func(c *fiber.Ctx) error {
+		email := c.Cookies("authToken")
+		if email == "" {
+			return c.Redirect("/auth/login")
+		}
+
+		exists, err := db.Client.User.Query().Where(user.EmailEQ(email)).Exist(c.Context())
+		if err != nil {
+			return err
+		}
+
+		if !exists {
+			return c.Redirect("/auth/login")
+		}
+
 		return c.Render("index", fiber.Map{
 			"Title": "Katbox",
 		})

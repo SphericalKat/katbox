@@ -1,12 +1,16 @@
 package api
 
 import (
+	"github.com/SphericalKat/katbox/ent/user"
+	"github.com/SphericalKat/katbox/internal/db"
+	"github.com/SphericalKat/katbox/internal/utils"
 	"github.com/gofiber/fiber/v2"
-	"github.com/sirupsen/logrus"
 )
 
 func renderLogin(c *fiber.Ctx) error {
-	return c.Render("login", nil)
+	return c.Render("login", fiber.Map{
+		"Error": nil,
+	})
 }
 
 type LoginReq struct {
@@ -20,9 +24,38 @@ func doLogin(c *fiber.Ctx) error {
 		return err
 	}
 
-	logrus.Info(l)
+	user, err := db.Client.User.Query().Where(
+		user.EmailEQ(l.Email),
+	).Only(c.Context())
+	if err != nil {
+		return c.Render("login", fiber.Map{
+			"Error": err,
+		})
+	}
+	if user == nil {
+		return c.Render("login", fiber.Map{
+			"Error": "Incorrect email or password.",
+		})
+	}
 
-	return nil
+	match, err := utils.ComparePassword(l.Password, user.Password)
+	if err != nil {
+		return c.Render("login", fiber.Map{
+			"Error": err,
+		})
+	}
+	if !match {
+		return c.Render("login", fiber.Map{
+			"Error": "Incorrect email or password.",
+		})
+	}
+
+	c.Cookie(&fiber.Cookie{
+		Name:  "authToken",
+		Value: l.Email,
+	})
+
+	return c.Redirect("/")
 }
 
 func MountAuth(app *fiber.App) {
