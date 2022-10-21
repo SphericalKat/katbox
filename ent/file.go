@@ -20,6 +20,8 @@ type File struct {
 	ID uuid.UUID `json:"id,omitempty"`
 	// StorageKey holds the value of the "storage_key" field.
 	StorageKey string `json:"storage_key,omitempty"`
+	// FileName holds the value of the "file_name" field.
+	FileName string `json:"file_name,omitempty"`
 	// ExpiresAt holds the value of the "expires_at" field.
 	ExpiresAt time.Time `json:"expires_at,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
@@ -56,7 +58,7 @@ func (*File) scanValues(columns []string) ([]interface{}, error) {
 	values := make([]interface{}, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case file.FieldStorageKey:
+		case file.FieldStorageKey, file.FieldFileName:
 			values[i] = new(sql.NullString)
 		case file.FieldExpiresAt:
 			values[i] = new(sql.NullTime)
@@ -90,6 +92,12 @@ func (f *File) assignValues(columns []string, values []interface{}) error {
 				return fmt.Errorf("unexpected type %T for field storage_key", values[i])
 			} else if value.Valid {
 				f.StorageKey = value.String
+			}
+		case file.FieldFileName:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field file_name", values[i])
+			} else if value.Valid {
+				f.FileName = value.String
 			}
 		case file.FieldExpiresAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
@@ -139,6 +147,8 @@ func (f *File) String() string {
 	builder.WriteString(fmt.Sprintf("id=%v", f.ID))
 	builder.WriteString(", storage_key=")
 	builder.WriteString(f.StorageKey)
+	builder.WriteString(", file_name=")
+	builder.WriteString(f.FileName)
 	builder.WriteString(", expires_at=")
 	builder.WriteString(f.ExpiresAt.Format(time.ANSIC))
 	builder.WriteByte(')')

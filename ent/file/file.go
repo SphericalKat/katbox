@@ -15,6 +15,8 @@ const (
 	FieldID = "id"
 	// FieldStorageKey holds the string denoting the storage_key field in the database.
 	FieldStorageKey = "storage_key"
+	// FieldFileName holds the string denoting the file_name field in the database.
+	FieldFileName = "file_name"
 	// FieldExpiresAt holds the string denoting the expires_at field in the database.
 	FieldExpiresAt = "expires_at"
 	// EdgeUser holds the string denoting the user edge name in mutations.
@@ -34,6 +36,7 @@ const (
 var Columns = []string{
 	FieldID,
 	FieldStorageKey,
+	FieldFileName,
 	FieldExpiresAt,
 }
 
@@ -61,6 +64,8 @@ func ValidColumn(column string) bool {
 var (
 	// StorageKeyValidator is a validator for the "storage_key" field. It is called by the builders before save.
 	StorageKeyValidator func(string) error
+	// FileNameValidator is a validator for the "file_name" field. It is called by the builders before save.
+	FileNameValidator func(string) error
 	// DefaultExpiresAt holds the default value on creation for the "expires_at" field.
 	DefaultExpiresAt func() time.Time
 	// DefaultID holds the default value on creation for the "id" field.

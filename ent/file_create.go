@@ -28,6 +28,12 @@ func (fc *FileCreate) SetStorageKey(s string) *FileCreate {
 	return fc
 }
 
+// SetFileName sets the "file_name" field.
+func (fc *FileCreate) SetFileName(s string) *FileCreate {
+	fc.mutation.SetFileName(s)
+	return fc
+}
+
 // SetExpiresAt sets the "expires_at" field.
 func (fc *FileCreate) SetExpiresAt(t time.Time) *FileCreate {
 	fc.mutation.SetExpiresAt(t)
@@ -158,6 +164,14 @@ func (fc *FileCreate) check() error {
 			return &ValidationError{Name: "storage_key", err: fmt.Errorf(`ent: validator failed for field "File.storage_key": %w`, err)}
 		}
 	}
+	if _, ok := fc.mutation.FileName(); !ok {
+		return &ValidationError{Name: "file_name", err: errors.New(`ent: missing required field "File.file_name"`)}
+	}
+	if v, ok := fc.mutation.FileName(); ok {
+		if err := file.FileNameValidator(v); err != nil {
+			return &ValidationError{Name: "file_name", err: fmt.Errorf(`ent: validator failed for field "File.file_name": %w`, err)}
+		}
+	}
 	if _, ok := fc.mutation.ExpiresAt(); !ok {
 		return &ValidationError{Name: "expires_at", err: errors.New(`ent: missing required field "File.expires_at"`)}
 	}
@@ -207,6 +221,14 @@ func (fc *FileCreate) createSpec() (*File, *sqlgraph.CreateSpec) {
 			Column: file.FieldStorageKey,
 		})
 		_node.StorageKey = value
+	}
+	if value, ok := fc.mutation.FileName(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: file.FieldFileName,
+		})
+		_node.FileName = value
 	}
 	if value, ok := fc.mutation.ExpiresAt(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{

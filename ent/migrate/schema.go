@@ -12,6 +12,7 @@ var (
 	FilesColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUUID},
 		{Name: "storage_key", Type: field.TypeString, Unique: true},
+		{Name: "file_name", Type: field.TypeString},
 		{Name: "expires_at", Type: field.TypeTime},
 		{Name: "user_files", Type: field.TypeUUID},
 	}
@@ -23,7 +24,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "files_users_files",
-				Columns:    []*schema.Column{FilesColumns[3]},
+				Columns:    []*schema.Column{FilesColumns[4]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.Cascade,
 			},

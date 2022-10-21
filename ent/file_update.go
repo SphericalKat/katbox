@@ -36,6 +36,12 @@ func (fu *FileUpdate) SetStorageKey(s string) *FileUpdate {
 	return fu
 }
 
+// SetFileName sets the "file_name" field.
+func (fu *FileUpdate) SetFileName(s string) *FileUpdate {
+	fu.mutation.SetFileName(s)
+	return fu
+}
+
 // SetExpiresAt sets the "expires_at" field.
 func (fu *FileUpdate) SetExpiresAt(t time.Time) *FileUpdate {
 	fu.mutation.SetExpiresAt(t)
@@ -139,6 +145,11 @@ func (fu *FileUpdate) check() error {
 			return &ValidationError{Name: "storage_key", err: fmt.Errorf(`ent: validator failed for field "File.storage_key": %w`, err)}
 		}
 	}
+	if v, ok := fu.mutation.FileName(); ok {
+		if err := file.FileNameValidator(v); err != nil {
+			return &ValidationError{Name: "file_name", err: fmt.Errorf(`ent: validator failed for field "File.file_name": %w`, err)}
+		}
+	}
 	if _, ok := fu.mutation.UserID(); fu.mutation.UserCleared() && !ok {
 		return errors.New(`ent: clearing a required unique edge "File.user"`)
 	}
@@ -168,6 +179,13 @@ func (fu *FileUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Type:   field.TypeString,
 			Value:  value,
 			Column: file.FieldStorageKey,
+		})
+	}
+	if value, ok := fu.mutation.FileName(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: file.FieldFileName,
 		})
 	}
 	if value, ok := fu.mutation.ExpiresAt(); ok {
@@ -234,6 +252,12 @@ type FileUpdateOne struct {
 // SetStorageKey sets the "storage_key" field.
 func (fuo *FileUpdateOne) SetStorageKey(s string) *FileUpdateOne {
 	fuo.mutation.SetStorageKey(s)
+	return fuo
+}
+
+// SetFileName sets the "file_name" field.
+func (fuo *FileUpdateOne) SetFileName(s string) *FileUpdateOne {
+	fuo.mutation.SetFileName(s)
 	return fuo
 }
 
@@ -347,6 +371,11 @@ func (fuo *FileUpdateOne) check() error {
 			return &ValidationError{Name: "storage_key", err: fmt.Errorf(`ent: validator failed for field "File.storage_key": %w`, err)}
 		}
 	}
+	if v, ok := fuo.mutation.FileName(); ok {
+		if err := file.FileNameValidator(v); err != nil {
+			return &ValidationError{Name: "file_name", err: fmt.Errorf(`ent: validator failed for field "File.file_name": %w`, err)}
+		}
+	}
 	if _, ok := fuo.mutation.UserID(); fuo.mutation.UserCleared() && !ok {
 		return errors.New(`ent: clearing a required unique edge "File.user"`)
 	}
@@ -393,6 +422,13 @@ func (fuo *FileUpdateOne) sqlSave(ctx context.Context) (_node *File, err error) 
 			Type:   field.TypeString,
 			Value:  value,
 			Column: file.FieldStorageKey,
+		})
+	}
+	if value, ok := fuo.mutation.FileName(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeString,
+			Value:  value,
+			Column: file.FieldFileName,
 		})
 	}
 	if value, ok := fuo.mutation.ExpiresAt(); ok {

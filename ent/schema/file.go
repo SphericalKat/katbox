@@ -19,6 +19,7 @@ func (File) Fields() []ent.Field {
 	return []ent.Field{
 		field.UUID("id", uuid.UUID{}).Default(uuid.New),
 		field.String("storage_key").NotEmpty().Unique(),
+		field.String("file_name").NotEmpty(),
 		field.Time("expires_at").Default(func() time.Time {
 			return time.Now().Add(24 * 7 * time.Hour)
 		}),

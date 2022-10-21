@@ -21,8 +21,12 @@ func init() {
 	fileDescStorageKey := fileFields[1].Descriptor()
 	// file.StorageKeyValidator is a validator for the "storage_key" field. It is called by the builders before save.
 	file.StorageKeyValidator = fileDescStorageKey.Validators[0].(func(string) error)
+	// fileDescFileName is the schema descriptor for file_name field.
+	fileDescFileName := fileFields[2].Descriptor()
+	// file.FileNameValidator is a validator for the "file_name" field. It is called by the builders before save.
+	file.FileNameValidator = fileDescFileName.Validators[0].(func(string) error)
 	// fileDescExpiresAt is the schema descriptor for expires_at field.
-	fileDescExpiresAt := fileFields[2].Descriptor()
+	fileDescExpiresAt := fileFields[3].Descriptor()
 	// file.DefaultExpiresAt holds the default value on creation for the expires_at field.
 	file.DefaultExpiresAt = fileDescExpiresAt.Default.(func() time.Time)
 	// fileDescID is the schema descriptor for id field.

@@ -37,6 +37,7 @@ type FileMutation struct {
 	typ           string
 	id            *uuid.UUID
 	storage_key   *string
+	file_name     *string
 	expires_at    *time.Time
 	clearedFields map[string]struct{}
 	user          *uuid.UUID
@@ -186,6 +187,42 @@ func (m *FileMutation) ResetStorageKey() {
 	m.storage_key = nil
 }
 
+// SetFileName sets the "file_name" field.
+func (m *FileMutation) SetFileName(s string) {
+	m.file_name = &s
+}
+
+// FileName returns the value of the "file_name" field in the mutation.
+func (m *FileMutation) FileName() (r string, exists bool) {
+	v := m.file_name
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldFileName returns the old "file_name" field's value of the File entity.
+// If the File object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *FileMutation) OldFileName(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldFileName is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldFileName requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldFileName: %w", err)
+	}
+	return oldValue.FileName, nil
+}
+
+// ResetFileName resets all changes to the "file_name" field.
+func (m *FileMutation) ResetFileName() {
+	m.file_name = nil
+}
+
 // SetExpiresAt sets the "expires_at" field.
 func (m *FileMutation) SetExpiresAt(t time.Time) {
 	m.expires_at = &t
@@ -280,9 +317,12 @@ func (m *FileMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *FileMutation) Fields() []string {
-	fields := make([]string, 0, 2)
+	fields := make([]string, 0, 3)
 	if m.storage_key != nil {
 		fields = append(fields, file.FieldStorageKey)
+	}
+	if m.file_name != nil {
+		fields = append(fields, file.FieldFileName)
 	}
 	if m.expires_at != nil {
 		fields = append(fields, file.FieldExpiresAt)
@@ -297,6 +337,8 @@ func (m *FileMutation) Field(name string) (ent.Value, bool) {
 	switch name {
 	case file.FieldStorageKey:
 		return m.StorageKey()
+	case file.FieldFileName:
+		return m.FileName()
 	case file.FieldExpiresAt:
 		return m.ExpiresAt()
 	}
@@ -310,6 +352,8 @@ func (m *FileMutation) OldField(ctx context.Context, name string) (ent.Value, er
 	switch name {
 	case file.FieldStorageKey:
 		return m.OldStorageKey(ctx)
+	case file.FieldFileName:
+		return m.OldFileName(ctx)
 	case file.FieldExpiresAt:
 		return m.OldExpiresAt(ctx)
 	}
@@ -327,6 +371,13 @@ func (m *FileMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetStorageKey(v)
+		return nil
+	case file.FieldFileName:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetFileName(v)
 		return nil
 	case file.FieldExpiresAt:
 		v, ok := value.(time.Time)
@@ -386,6 +437,9 @@ func (m *FileMutation) ResetField(name string) error {
 	switch name {
 	case file.FieldStorageKey:
 		m.ResetStorageKey()
+		return nil
+	case file.FieldFileName:
+		m.ResetFileName()
 		return nil
 	case file.FieldExpiresAt:
 		m.ResetExpiresAt()
