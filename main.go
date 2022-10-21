@@ -18,10 +18,10 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-//go:embed template/*
+//go:embed frontend/dist
 var template embed.FS
 
-//go:embed static/*
+//go:embed frontend/dist/assets
 var static embed.FS
 
 func main() {
@@ -32,17 +32,19 @@ func main() {
 	aws.Connect()
 
 	// create template engine
-	tmplFs, err := fs.Sub(template, "template")
+	tmplFs, err := fs.Sub(template, "frontend/dist")
 	if err != nil {
 		log.Fatalf("error loading template: %v\n", err)
 	}
+
 	engine := html.NewFileSystem(http.FS(tmplFs), ".html")
 
 	// create static file server
-	staticFs, err := fs.Sub(static, "static")
+	staticFs, err := fs.Sub(static, "frontend/dist/assets")
 	if err != nil {
 		log.Fatalf("error loading static assets: %v\n", err)
 	}
+
 	staticHttp := http.FS(staticFs)
 
 	// create a waitgroup for all tasks
