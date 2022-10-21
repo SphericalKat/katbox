@@ -7,9 +7,9 @@ import (
 	"github.com/SphericalKat/katbox/ent"
 	"github.com/SphericalKat/katbox/ent/file"
 	"github.com/SphericalKat/katbox/ent/user"
-	"github.com/SphericalKat/katbox/internal/aws"
 	"github.com/SphericalKat/katbox/internal/config"
 	"github.com/SphericalKat/katbox/internal/db"
+	"github.com/SphericalKat/katbox/internal/storage"
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"
@@ -49,7 +49,7 @@ func uploadFile(c *fiber.Ctx) error {
 
 	storageKey := fmt.Sprintf("%s/%s_%s", user.Email, uuid.NewString(), fileHeader.Filename)
 
-	key, err := aws.UploadMinio(c.Context(), storageKey, contentType, file)
+	key, err := storage.UploadMinio(c.Context(), storageKey, contentType, file)
 	if err != nil {
 		logrus.Error(err)
 		return err
@@ -102,7 +102,7 @@ func getFile(c *fiber.Ctx) error {
 		return fiber.ErrNotFound
 	}
 
-	url, err := aws.MC.Presign(c.Context(), "GET", config.Conf.S3BucketName, user.Edges.Files[0].StorageKey, 7*24*time.Hour, nil)
+	url, err := storage.MC.Presign(c.Context(), "GET", config.Conf.S3BucketName, user.Edges.Files[0].StorageKey, 7*24*time.Hour, nil)
 	if err != nil {
 		logrus.Error(err)
 		return err

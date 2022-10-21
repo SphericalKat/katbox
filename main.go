@@ -10,10 +10,10 @@ import (
 	"embed"
 
 	"github.com/SphericalKat/katbox/api"
-	"github.com/SphericalKat/katbox/internal/aws"
 	"github.com/SphericalKat/katbox/internal/config"
 	"github.com/SphericalKat/katbox/internal/db"
 	"github.com/SphericalKat/katbox/internal/lifecycle"
+	"github.com/SphericalKat/katbox/internal/storage"
 	"github.com/gofiber/template/html"
 	log "github.com/sirupsen/logrus"
 )
@@ -29,8 +29,7 @@ func main() {
 	config.Load()
 
 	// connect to s3
-	aws.Connect()
-	aws.ConnectMinio()
+	storage.ConnectMinio()
 
 	// create template engine
 	tmplFs, err := fs.Sub(template, "frontend/dist")
