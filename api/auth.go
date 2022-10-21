@@ -8,6 +8,10 @@ import (
 )
 
 func renderLogin(c *fiber.Ctx) error {
+	if c.Cookies("authToken") != "" {
+		return c.Redirect("/")
+	}
+
 	return c.Render("login", fiber.Map{
 		"Error": nil,
 	})
