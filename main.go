@@ -30,6 +30,7 @@ func main() {
 
 	// connect to s3
 	aws.Connect()
+	aws.ConnectMinio()
 
 	// create template engine
 	tmplFs, err := fs.Sub(template, "frontend/dist")

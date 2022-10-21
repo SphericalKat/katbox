@@ -14,7 +14,7 @@ func index(c *fiber.Ctx) error {
 
 	exists, err := db.Client.User.Query().Where(user.EmailEQ(email)).Exist(c.Context())
 	if err != nil {
-		return err
+		return c.Redirect("/auth/login")
 	}
 
 	if !exists {

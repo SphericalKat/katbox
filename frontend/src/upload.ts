@@ -41,7 +41,7 @@ form.addEventListener("submit", (e) => {
       submitBtn.style.display = "block";
       progressbar.style.display = "none";
       result.style.display = "block";
-      const fileUrl = `${window.location.origin}/${res.data.fileId}`;
+      const fileUrl = `${window.location.origin}/file/${res.data.fileId}`;
       resultUrl.href = fileUrl;
       resultUrl.text = fileUrl;
     });
