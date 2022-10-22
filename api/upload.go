@@ -6,7 +6,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/SphericalKat/katbox/ent"
 	"github.com/SphericalKat/katbox/ent/file"
 	"github.com/SphericalKat/katbox/ent/user"
 	"github.com/SphericalKat/katbox/internal/config"
@@ -77,10 +76,10 @@ func uploadFile(c *fiber.Ctx) error {
 }
 
 func getFile(c *fiber.Ctx) error {
-	email := c.Cookies("authToken")
-	if email == "" {
-		return c.Redirect("/auth/login")
-	}
+	//email := c.Cookies("authToken")
+	//if email == "" {
+	//	return c.Redirect("/auth/login")
+	//}
 
 	fileIdStr := c.Params("fileId")
 	fileId, err := uuid.Parse(fileIdStr)
@@ -88,25 +87,23 @@ func getFile(c *fiber.Ctx) error {
 		return fiber.ErrUnprocessableEntity
 	}
 
-	user, err := db.Client.User.
+	dbFile, err := db.Client.File.
 		Query().
-		Where(user.EmailEQ(email)).
-		WithFiles(func(fq *ent.FileQuery) {
-			fq.Where(file.IDEQ(fileId))
-		}).First(c.Context())
+		Where(file.IDEQ(fileId)).
+		Only(c.Context())
 	if err != nil {
 		logrus.Error(err)
 		return err
 	}
-	if user == nil {
-		return fiber.ErrNotFound
-	}
+	//if dbUser == nil {
+	//	return fiber.ErrNotFound
+	//}
+	//
+	//if len(dbUser.Edges.Files) == 0 {
+	//	return fiber.ErrNotFound
+	//}
 
-	if len(user.Edges.Files) == 0 {
-		return fiber.ErrNotFound
-	}
-
-	url, err := storage.MC.Presign(c.Context(), "GET", config.Conf.S3BucketName, user.Edges.Files[0].StorageKey, 7*24*time.Hour, nil)
+	url, err := storage.MC.Presign(c.Context(), "GET", config.Conf.S3BucketName, dbFile.StorageKey, 1*time.Hour, nil)
 	if err != nil {
 		logrus.Error(err)
 		return err

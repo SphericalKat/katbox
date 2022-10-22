@@ -21,7 +21,9 @@ jobs:
           node-version: 16
 
       - name: Install dependencies
-        run: npm install
+        run: |
+          npm install
+          go mod download ariga.io/atlas@latest
 
       - name: Generate build files
         uses: thatisuday/go-cross-build@master
