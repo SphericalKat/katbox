@@ -13,7 +13,7 @@ import (
 var MC *minio.Client
 
 func ConnectMinio() {
-	endpoint := "s3.ap-southeast-2.wasabisys.com"
+	endpoint := config.Conf.S3Endpoint
 	minioClient, err := minio.New(endpoint, &minio.Options{
 		Creds:  credentials.NewStaticV4(config.Conf.S3AccessKey, config.Conf.S3SecretKey, ""),
 		Secure: true,

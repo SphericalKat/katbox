@@ -1,48 +1,41 @@
 package config
 
 import (
+	"github.com/knadh/koanf"
+	"github.com/knadh/koanf/parsers/dotenv"
+	"github.com/knadh/koanf/providers/env"
+	"github.com/knadh/koanf/providers/file"
 	log "github.com/sirupsen/logrus"
-	"github.com/spf13/viper"
 )
 
 type Config struct {
-	DatabaseURL  string `mapstructure:"DATABASE_URL"`
-	Port         string `mapstructure:"PORT"`
-	S3AccessKey  string `mapstructure:"S3_ACCESS_KEY"`
-	S3SecretKey  string `mapstructure:"S3_SECRET_KEY"`
-	S3BucketName string `mapstructure:"S3_BUCKET_NAME"`
-	Env          string `mapstructure:"ENV"`
-	SecretKey    string `mapstructure:"SECRET_KEY"`
+	DatabaseURL  string `koanf:"DATABASE_URL"`
+	Port         string `koanf:"PORT"`
+	S3AccessKey  string `koanf:"S3_ACCESS_KEY"`
+	S3SecretKey  string `koanf:"S3_SECRET_KEY"`
+	S3BucketName string `koanf:"S3_BUCKET_NAME"`
+	S3Endpoint   string `koanf:"S3_ENDPOINT"`
+	Env          string `koanf:"ENV"`
+	SecretKey    string `koanf:"SECRET_KEY"`
 }
 
 var Conf *Config
 
+var k = koanf.New(".")
+
 func Load() {
-	// tell viper where our config file is
-	viper.AddConfigPath(".")
-	viper.SetConfigName(".env")
-	viper.SetConfigType("env")
-
-	// override values that it has read from config file with the values of the corresponding environment variables if they exist
-	viper.AutomaticEnv()
-
-	// set defaults
-	viper.SetDefault("PORT", "3000")
-	viper.SetDefault("DATABASE_URL", "postgres://postgres:password@localhost:5432/katbox?sslmode=disable")
-	viper.SetDefault("S3_BUCKET_NAME", "katbox")
-	viper.SetDefault("ENV", "dev")
-	viper.SetDefault("SECRET_KEY", "too_sekret")
-
-	// read in config values
-	err := viper.ReadInConfig()
-	if err != nil {
-		log.Fatal("Error loading config: ", err)
+	if err := k.Load(file.Provider(".env"), dotenv.Parser()); err != nil {
+		log.Infof("unable to find env file: %v", err)
+		log.Info("falling back to env variables")
 	}
 
-	// unmarshal config to struct
+	if err := k.Load(env.Provider("", ".", nil), nil); err != nil {
+		log.Fatalf("error loading config: %v", err)
+	}
+
 	Conf = &Config{}
-	err = viper.Unmarshal(Conf)
+	err := k.Unmarshal("", Conf)
 	if err != nil {
-		log.Fatal("Error loading config: ", err)
+		log.Fatalf("error loading config: %v", err)
 	}
 }

@@ -2,6 +2,8 @@ package api
 
 import (
 	"fmt"
+	"path/filepath"
+	"strings"
 	"time"
 
 	"github.com/SphericalKat/katbox/ent"
@@ -41,20 +43,22 @@ func uploadFile(c *fiber.Ctx) error {
 		contentType = "application/octet-stream"
 	}
 
+	ext := filepath.Ext(fileHeader.Filename)
+	filename := strings.TrimSuffix(fileHeader.Filename, ext)
+
 	file, err := fileHeader.Open()
 	if err != nil {
 		logrus.Error(err)
 		return err
 	}
 
-	storageKey := fmt.Sprintf("%s/%s_%s", user.Email, uuid.NewString(), fileHeader.Filename)
+	storageKey := fmt.Sprintf("%s/%s_%s%s", user.Email, filename, uuid.NewString(), ext)
 
-	key, err := storage.UploadMinio(c.Context(), storageKey, contentType, file)
+	_, err = storage.UploadMinio(c.Context(), storageKey, contentType, file)
 	if err != nil {
 		logrus.Error(err)
 		return err
 	}
-	logrus.Info(key)
 
 	dbFile, err := db.Client.File.
 		Create().
